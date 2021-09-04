@@ -1,0 +1,137 @@
+To create react express project 
+1. we need to create two folder client and server. 
+2. in client folder we need to run command. 
+    2.1. npx create-react-app .(Note: create-react-app just a name)
+    2.2. then we start our application using command --> npm start
+    2.3. then we have to delete unwanted file in
+        client->
+            |src->(App.test.js, index.css, reportWebVitals.js, setupTests.js, logo.svg)
+    2.4. then delete some lines from client->src->index.js file 
+        the update line should be like these->
+
+        import React from 'react';
+        import ReactDOM from 'react-dom';
+        import App from './App';
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+
+    2.5. then we should update client->src->App.js file
+         the update line should look like this.
+        
+        import './App.css';
+
+        function App() {
+        return (
+            <div className="App">Hello world</div>
+        );
+        }
+
+        export default App;
+
+    2.6. then create some form tag in App.js 
+    2.7. then delete lines from same src folder-> App.css file.
+         the file should look like this.
+         .App {
+            text-align: center;
+        }
+    2.8. Add some css line as your wish.
+
+3. Next We are going to server folder
+    3.1. in server folder first command to install 
+        a.  npm init(to create json file)
+        b. npm install express body-parser mysql nodemon --save 
+            in this cmd i have installed 3 module express, body-parser, nodemon and mysql
+
+    3.2. in index.js file we need express code like this
+        const express  = require('express') // at first we need require express dependencies
+        const app = express()
+
+        app.listen(3001, () => {
+            console.log('running on port 3001')
+        }) // our express server run 3001 port
+
+    3.2. to run node index.js file we need to command 
+        ->>>node index.js (while run these command. we have to go to the browser and write in url the ip address like
+        http://localhost:3001/ when we go to that page we can see that there's a line write that "can't get /" that means 
+        our node index.js working perfectly)
+
+    3.4. if we want to get or access the initial route we need to write. in index.js file
+    
+         app.get('/', (req, res) => {
+             res.send("this is not awsome as you are telling me todo that")
+         )
+        (Note: if you write console message instead of res.send then it will show the message in terminal)
+    
+    3.5. if we want to run out server continuously if we change anything in our code. 
+         then we have write in package.json
+         in 
+         "scripts": {
+            "start" : "node index.js"
+            "devStart" : "nodemon index.js" //only in case of development
+            "test": "echo \"Error: no test specified\" && exit 1"
+         },
+    3.6. after write in package.json then we need access command in terminal 
+         -->>>> npm run devStart
+    
+    3.7. to access mysql we need to write-->>>
+            const db = mysql.createPool({
+                            host     : 'localhost',
+                            user     : 'root',
+                            password : '',
+                            database : "CRUDDataBase",
+                        })
+
+            (Note: just check using insert query that db is connect or not.)
+            
+            app.get('/', (req, res) => {
+                const sqlInsert = "INSERT INTO movie_reviews (movieName, movieReview) VALUES ('gonda', 'thriller movie');"
+                db.query(sqlInsert, (err, result)=> {
+                    res.send("insert successfully")
+                })
+                // res.send(db)
+            })
+2. We have to back in front end or react or in client folder
+    2.9. we set state data from input tag.
+    2.10. we need install axios for api data.
+          to install axios we need to run command in terminal---> npm i axios
+    2.11. we need to write in client->App.js
+          a) first we need to import axios -> import Axios from 'axios'
+          b) then we need write axios api code in a submit method like that -->>>
+             const submitReview = () => {
+                Axios.post('http://localhost:3001/api/insert', {
+                movieName   : movieName, (Note: movieName is state data and also review)
+                movieReview : review
+                }).then(()=> {
+                alert('you have successful Insert')
+                })
+            }
+
+3.  3.8. we need write app.post in server->App.js
+        app.post("/api/insert", (req, res) => {
+            const movieName = req.body.movieName
+            const movieReview = req.body.movieReview
+
+            const sqlInsert = "INSERT INTO movie_reviews (movieName, movieReview) VALUES (?, ?)"
+            db.query(sqlInsert, [movieName, movieReview], (err, result) => {
+                console.log(`object`, result)
+            })
+        })
+
+    3.9. we also need add this line --> 
+         const bodyParser = require('body-parser')
+         app.use(bodyParser.urlencoded({extended: true}))
+    3.10. if tried to insert data from the form webbrowser we should face "cors" error 
+          To solve this problem we need to write.
+          in terminal --> npm install cors
+
+    3.11. we need add those line also--->>> const cors = require('cors')
+          app.use(cors())
+          app.use(express.json())
+
+    3.12. if we want get all data from database table then we need write in in server->index.js given below
+            app.get('/api/get', (req, res) => {
+                        const sqlSelect = "SELECT * FROM movie_reviews";
+                        db.query(sqlSelect, (err, result) => {
+                            res.send(result)
+                        })
+                    })
