@@ -1,7 +1,7 @@
 To create react express project 
 1. we need to create two folder client and server. 
 2. in client folder we need to run command. 
-    2.1. npx create-react-app .(Note: create-react-app just a name)
+    2.1. npx create-react-app . (Note: Here "."(dot) just a name)
     2.2. then we start our application using command --> npm start
     2.3. then we have to delete unwanted file in
         client->
@@ -40,7 +40,7 @@ To create react express project
     3.1. in server folder first command to install 
         a.  npm init(to create json file)
         b. npm install express body-parser mysql nodemon --save 
-            in this cmd i have installed 3 module express, body-parser, nodemon and mysql
+            in this cmd i have installed 4 module express, body-parser, nodemon and mysql
 
     3.2. in index.js file we need express code like this
         const express  = require('express') // at first we need require express dependencies
@@ -74,6 +74,8 @@ To create react express project
          -->>>> npm run devStart
     
     3.7. to access mysql we need to write-->>>
+            
+            const mysql = require('mysql')
             const db = mysql.createPool({
                             host     : 'localhost',
                             user     : 'root',
@@ -135,3 +137,40 @@ To create react express project
                             res.send(result)
                         })
                     })
+
+
+4. create mvc pattern.
+    1.create folder model,controller
+    create app. js those lines
+    //const express  = require('express')
+    //const app = express()
+    // const cors = require('cors')
+
+
+    // app.use(cors())
+
+    
+    // app.listen(3001, () => {
+    //     console.log('running on port 3001')
+    // })
+
+    db.js in model folder
+    create user.js model file
+     const sqlInsert = "INSERT INTO users (name, email) VALUES (?, ?)"
+            db.query(sqlInsert, [name, email], (err, result) => {
+                console.log(err)
+            })
+
+    create usercontroller in controller
+    app.post('/api/user/import', (req, res) => {
+    const fileName = req.body
+    fileName.map(file => {
+        const name = file[0]
+        const email = file[1]
+        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if(name != '' && email != '' && name != 'name' && re.test(String(email).toLowerCase())) {
+            console.log(`name = ${file[0]} & email = ${file[1]}`)
+            
+        }
+    })
+})
